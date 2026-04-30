@@ -2,6 +2,8 @@
 
 Low-power firmware for the Nordic Semiconductor **nRF52833 DK** to interface with the **TCS3448 14-channel multi-spectral sensor** over I²C. Designed for outdoor applications such as PAR (Photosynthetically Active Radiation) monitoring and spectral analysis.
 
+![PCB Setup](images/board_1.jpg)
+
 This project was developed by **Nan, Jingjie** (📧 [j23417891@gmail.com](mailto:j23417891@gmail.com)). Her full project report and poster are available here: [📄 Final Year Project Report](Report/JingjieNan_Final%20Year%20Project.pdf) · [🖼️ Poster](Report/Poster.pdf)
 
 ---

@@ -73,5 +73,4 @@ Output/Debug/Obj/tcs3448_pca10100/i2c_interface.o: \
  ../../../../../../components/libraries/balloc/nrf_balloc.h \
  ../../../../../../components/libraries/log/nrf_log_default_backends.h \
  C\:/Program\ Files/SEGGER/SEGGER\ Embedded\ Studio\ for\ ARM\ 5.42a/include/errno.h \
- ../../../drivers/as7341/as7341_defines.h \
  ../../../drivers/tcs3448/tcs3448_defines.h

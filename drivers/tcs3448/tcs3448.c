@@ -6,7 +6,6 @@
 #include "nrf_log.h"
 
 #include "nrf_log_ctrl.h"
-#include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
 #include "sdk_errors.h"
 
@@ -65,7 +64,7 @@ void tcs3448_power_enable(bool enable) {
     if (!ok) NRF_LOG_ERROR("Failed to write CFG0");
     ok &= tcs3448_write_reg(TCS3448_CFG1, (uint8_t)gain);
     if (!ok) NRF_LOG_ERROR("Failed to write CFG1");
-    // CFG6 SMUX_CMD[4:3]=0b01 → execute SMUX; bit 5 is reserved and must be 0
+    // CFG6 SMUX_CMD[4:3]=0b10 (value 2) → write RAM config to SMUX chain (default); bit 5 reserved=0
     ok &= tcs3448_write_reg(TCS3448_CFG6, 0x10);
     if (!ok) NRF_LOG_ERROR("Failed to write CFG6");
     // CFG20 auto_smux=3 (bits[6:5]=0b11) → 18-channel automatic measurement
@@ -118,9 +117,7 @@ bool tcs3448_read_all_channels(uint16_t *readings_buffer) {
 // Delay for data readiness (nRF52 style, no POSIX timespec)
 void tcs3448_delay_for_data(int wait_time_ms) {
     if (wait_time_ms == 0) {
-        // Wait until data ready
         while (!tcs3448_get_is_data_ready()) {
-            //nrf_delay_ms(1);
             nrf_delay_ms(1);
         }
     } else if (wait_time_ms > 0) {
