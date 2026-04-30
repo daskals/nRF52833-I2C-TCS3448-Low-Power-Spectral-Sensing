@@ -4,6 +4,8 @@ Low-power firmware for the Nordic Semiconductor **nRF52833 DK** to interface wit
 
 ![PCB Setup](images/board_1.jpg)
 
+![PCB Setup](images/board_3.jpeg)
+
 This project was developed by **Nan, Jingjie** (📧 [j23417891@gmail.com](mailto:j23417891@gmail.com)). Her full project report and poster are available here: [📄 Final Year Project Report](Report/JingjieNan_Final%20Year%20Project.pdf) · [🖼️ Poster](Report/Poster.pdf)
 
 ---
@@ -47,26 +49,26 @@ t_int = (ATIME + 1) × (ASTEP + 1) × 2.78 µs
 
 The sensor uses `auto_smux` mode (`CFG20 = 0x60`), routing all spectral channels across 3 internal cycles automatically. Data is read as 18 × 16-bit values starting from `ASTATUS` (0x94):
 
-| Index | Channel | Wavelength |
-|-------|---------|-----------|
-| 0 | FZ (Cycle 1) | Broadband |
-| 1 | FY (Cycle 1) | Broadband |
-| 2 | FXL (Cycle 1) | Extended |
-| 3 | NIR (Cycle 1) | Near-IR |
-| 4 | VIS (Cycle 1) | Clear |
-| 5 | FD (Cycle 1) | Flicker |
-| 6 | **F2** (Cycle 2) | 445 nm |
-| 7 | **F3** (Cycle 2) | 480 nm |
-| 8 | **F4** (Cycle 2) | 515 nm |
-| 9 | **F6** (Cycle 2) | 590 nm |
-| 10 | VIS (Cycle 2) | Clear |
-| 11 | FD (Cycle 2) | Flicker |
-| 12 | **F1** (Cycle 3) | 415 nm |
-| 13 | **F7** (Cycle 3) | 630 nm |
-| 14 | **F8** (Cycle 3) | 680 nm |
-| 15 | **F5** (Cycle 3) | 555 nm |
-| 16 | VIS (Cycle 3) | Clear |
-| 17 | FD (Cycle 3) | Flicker |
+| Channel | λp typ (Table 5) | Buffer index |
+|---------|-----------------|-------------|
+| **F1** | 407 nm | 12 |
+| **F2** | 424 nm | 6 |
+| FZ | 450 nm | 0 |
+| **F3** | 473 nm | 7 |
+| **F4** | 516 nm | 8 |
+| **F5** | 546 nm | 15 |
+| FY | 560 nm | 1 |
+| FXL | 596 nm | 2 |
+| **F6** | 636 nm | 9 |
+| **F7** | 687 nm | 13 |
+| **F8** | 748 nm | 14 |
+| NIR | 855 nm | 3 |
+| VIS1 | Broadband | 4 |
+| VIS2 | Broadband | 10 |
+| VIS3 | Broadband | 16 |
+| FD1 | Broadband | 5 |
+| FD2 | Broadband | 11 |
+| FD3 | Broadband | 17 |
 
 ### 🌿 Computed Output
 

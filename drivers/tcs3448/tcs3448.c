@@ -64,10 +64,10 @@ void tcs3448_power_enable(bool enable) {
     if (!ok) NRF_LOG_ERROR("Failed to write CFG0");
     ok &= tcs3448_write_reg(TCS3448_CFG1, (uint8_t)gain);
     if (!ok) NRF_LOG_ERROR("Failed to write CFG1");
-    // CFG6 SMUX_CMD[4:3]=0b10 (value 2) → write RAM config to SMUX chain (default); bit 5 reserved=0
+    // CFG6 SMUX_CMD[4:3]=0b10 (value 2) -> write RAM config to SMUX chain (default); bit 5 reserved=0
     ok &= tcs3448_write_reg(TCS3448_CFG6, 0x10);
     if (!ok) NRF_LOG_ERROR("Failed to write CFG6");
-    // CFG20 auto_smux=3 (bits[6:5]=0b11) → 18-channel automatic measurement
+    // CFG20 auto_smux=3 (bits[6:5]=0b11) -> 18-channel automatic measurement
     ok &= tcs3448_write_reg(TCS3448_CFG20, 0x60);
     if (!ok) NRF_LOG_ERROR("Failed to write CFG20 (auto_smux)");
 
@@ -94,7 +94,7 @@ bool tcs3448_read_all_channels(uint16_t *readings_buffer) {
     tcs3448_enable_spectral_measurement(true);
     tcs3448_delay_for_data(0);
 
-    // Read ASTATUS (0x94) + 36 channel bytes (0x95–0xB8) in one burst.
+    // Read ASTATUS (0x94) + 36 channel bytes (0x95-0xB8) in one burst.
     // Reading ASTATUS first latches all 18 channels coherently before parsing.
     uint8_t buf[37] = {0};
     if (!i2c_read_bytes(TCS3448_I2CADDR_DEFAULT, TCS3448_ASTATUS, buf, 37)) {
@@ -146,28 +146,25 @@ bool tcs3448_get_is_data_ready(void) {
     if (tcs3448_read_all_channels(channel_readings)) {
         NRF_LOG_INFO("------------------------------");
         NRF_LOG_INFO("TCS3448 Spectral Data:");
-        // auto_smux=3 cycle order per CFG20 table (datasheet Table 46)
-        // Cycle 1
-        NRF_LOG_INFO("  FZ   (Cycle 1): %u", channel_readings[0]);
-        NRF_LOG_INFO("  FY   (Cycle 1): %u", channel_readings[1]);
-        NRF_LOG_INFO("  FXL  (Cycle 1): %u", channel_readings[2]);
-        NRF_LOG_INFO("  NIR  (Cycle 1): %u", channel_readings[3]);
-        NRF_LOG_INFO("  VIS  (Cycle 1): %u", channel_readings[4]);
-        NRF_LOG_INFO("  FD   (Cycle 1): %u", channel_readings[5]);
-        // Cycle 2
-        NRF_LOG_INFO("  F2   (445 nm) : %u", channel_readings[6]);
-        NRF_LOG_INFO("  F3   (480 nm) : %u", channel_readings[7]);
-        NRF_LOG_INFO("  F4   (515 nm) : %u", channel_readings[8]);
-        NRF_LOG_INFO("  F6   (590 nm) : %u", channel_readings[9]);
-        NRF_LOG_INFO("  VIS  (Cycle 2): %u", channel_readings[10]);
-        NRF_LOG_INFO("  FD   (Cycle 2): %u", channel_readings[11]);
-        // Cycle 3
-        NRF_LOG_INFO("  F1   (415 nm) : %u", channel_readings[12]);
-        NRF_LOG_INFO("  F7   (630 nm) : %u", channel_readings[13]);
-        NRF_LOG_INFO("  F8   (680 nm) : %u", channel_readings[14]);
-        NRF_LOG_INFO("  F5   (555 nm) : %u", channel_readings[15]);
-        NRF_LOG_INFO("  VIS  (Cycle 3): %u", channel_readings[16]);
-        NRF_LOG_INFO("  FD   (Cycle 3): %u", channel_readings[17]);
+        // Sorted by lp(typ) wavelength, Table 5 (TCS3448 datasheet)
+        NRF_LOG_INFO("  F1   (407 nm) : %u", channel_readings[12]);
+        NRF_LOG_INFO("  F2   (424 nm) : %u", channel_readings[6]);
+        NRF_LOG_INFO("  FZ   (450 nm) : %u", channel_readings[0]);
+        NRF_LOG_INFO("  F3   (473 nm) : %u", channel_readings[7]);
+        NRF_LOG_INFO("  F4   (516 nm) : %u", channel_readings[8]);
+        NRF_LOG_INFO("  F5   (546 nm) : %u", channel_readings[15]);
+        NRF_LOG_INFO("  FY   (560 nm) : %u", channel_readings[1]);
+        NRF_LOG_INFO("  FXL  (596 nm) : %u", channel_readings[2]);
+        NRF_LOG_INFO("  F6   (636 nm) : %u", channel_readings[9]);
+        NRF_LOG_INFO("  F7   (687 nm) : %u", channel_readings[13]);
+        NRF_LOG_INFO("  F8   (748 nm) : %u", channel_readings[14]);
+        NRF_LOG_INFO("  NIR  (855 nm) : %u", channel_readings[3]);
+        NRF_LOG_INFO("  VIS1 (broad)  : %u", channel_readings[4]);
+        NRF_LOG_INFO("  VIS2 (broad)  : %u", channel_readings[10]);
+        NRF_LOG_INFO("  VIS3 (broad)  : %u", channel_readings[16]);
+        NRF_LOG_INFO("  FD1  (broad)  : %u", channel_readings[5]);
+        NRF_LOG_INFO("  FD2  (broad)  : %u", channel_readings[11]);
+        NRF_LOG_INFO("  FD3  (broad)  : %u", channel_readings[17]);
         NRF_LOG_INFO("------------------------------");
         int32_t par_value = tcs3448_calculate_par_from_channels(channel_readings);
         NRF_LOG_INFO("  PAR: %d umol/m2/s", par_value);
@@ -177,28 +174,21 @@ bool tcs3448_get_is_data_ready(void) {
     }
 }
 
-static const float par_regression_coeffs[8]= {
-/*
-//brief Regression-calibrated coefficients for PAR
--5.40f,
--0.34f,
-4.88f,
--2.00f,
--6.83f,
-5.34f,
--1.62f,
--5.49f
-*/
-
-//weighted non-negative least squares coefficients
-0.010000003f,
-0.010000011f,
-0.183731419f,
-0.125531209f,
-0.01f,
-0.01f,
-0.01f,
-1.564951432f
+// PAR regression coefficients [F1..F8] in wavelength order (407-748 nm).
+// Applied to gain- and integration-time-normalised counts: raw / (gain * t_int_ms).
+// Scaled from original NNLS fit at gain=4x, t_int~100 ms (norm factor = 400).
+// Re-calibrate against a reference PAR sensor (e.g. Apogee SQ-500, LI-190)
+// to obtain accurate absolute PAR values in mol/m2/s.
+static const float par_intercept = 0.0f;  // placeholder - literature: b0 ~ -2 to -10
+static const float par_regression_coeffs[8] = {
+      4.0f,   // F1 (407 nm)
+      4.0f,   // F2 (424 nm)
+      4.0f,   // F3 (473 nm)
+     73.493f, // F4 (516 nm)
+    625.981f, // F5 (546 nm)
+     50.212f, // F6 (636 nm)
+      4.0f,   // F7 (687 nm)
+      4.0f,   // F8 (748 nm)
 };
 
 //brief Gain factors for each supported TCS3448 gain setting.
@@ -237,24 +227,29 @@ int32_t tcs3448_calculate_par_from_channels(const uint16_t *channel_readings)
         return -1;
     }
 
-    float gain = gain_factors[s_tcs3448_gain];
-
+    float gain        = gain_factors[s_tcs3448_gain];
     float int_time_ms = (s_atime + 1.0f) * (s_astep + 1.0f) * 0.00278f;
-    int whole = (int)int_time_ms;
-    int decimal = (int)((int_time_ms - whole) * 100);
-    /*NRF_LOG_INFO("Integration time = %d.%02d ms", whole, decimal);*/
+    float norm        = gain * int_time_ms;  // counts / (gain * ms) normalisation factor
 
-    float par = 0.0f;
+    // Divide raw counts by (gain * t_int_ms) so coefficients are sensor-setting independent
+    float f1 = channel_readings[12] / norm;  // 407 nm
+    float f2 = channel_readings[6]  / norm;  // 424 nm
+    float f3 = channel_readings[7]  / norm;  // 473 nm
+    float f4 = channel_readings[8]  / norm;  // 516 nm
+    float f5 = channel_readings[15] / norm;  // 546 nm
+    float f6 = channel_readings[9]  / norm;  // 636 nm
+    float f7 = channel_readings[13] / norm;  // 687 nm
+    float f8 = channel_readings[14] / norm;  // 748 nm
 
-    // Apply regression coefficients to F1-F8 channels'raw counts
-    par += par_regression_coeffs[4] * channel_readings[12];// F1
-    par += par_regression_coeffs[0] * channel_readings[6];// F2
-    par += par_regression_coeffs[1] * channel_readings[7];// F3
-    par += par_regression_coeffs[2] * channel_readings[8];// F4
-    par += par_regression_coeffs[7] * channel_readings[15];// F5
-    par += par_regression_coeffs[3] * channel_readings[9];// F6
-    par += par_regression_coeffs[5] * channel_readings[13];// F7
-    par += par_regression_coeffs[6] * channel_readings[14];// F8
+    float par = par_intercept;
+    par += par_regression_coeffs[0] * f1;
+    par += par_regression_coeffs[1] * f2;
+    par += par_regression_coeffs[2] * f3;
+    par += par_regression_coeffs[3] * f4;
+    par += par_regression_coeffs[4] * f5;
+    par += par_regression_coeffs[5] * f6;
+    par += par_regression_coeffs[6] * f7;
+    par += par_regression_coeffs[7] * f8;
 
     if (par < 0) par = 0;
     return (int32_t)(par);
