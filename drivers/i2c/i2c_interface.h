@@ -103,30 +103,6 @@ uint8_t i2c_transmit_uchar(uint8_t value, uint8_t address);
 bool i2c_read_bytes(uint8_t address, uint8_t reg, uint8_t *buf, size_t len);
 
 /**
- * @brief Write a byte to a register of the AS7341 sensor.
- * @param reg Register address.
- * @param value Value to write.
- * @return true if successful, false otherwise.
- */
-bool as7341_write_reg(uint8_t reg, uint8_t value);
-
-/**
- * @brief Read a byte from a register of the AS7341 sensor.
- * @param reg Register address.
- * @param value Pointer to store the read value.
- * @return true if successful, false otherwise.
- */
-bool as7341_read_reg(uint8_t reg, uint8_t *value);
-
-/**
- * @brief Read a 16-bit value from a register (LSB first) of the AS7341 sensor.
- * @param reg Register address.
- * @param value Pointer to store the read 16-bit value.
- * @return true if successful, false otherwise.
- */
-bool as7341_read_reg16(uint8_t reg, uint16_t *value);
-
-/**
  * @brief Write a byte to a register of the TCS3448 sensor.
  * @param reg Register address.
  * @param value Value to write.

@@ -36,7 +36,7 @@
 #define TCS3448_CFG12       0x66 ///< ALS_TH_CH[2:0] => which channel drives thresholds/persistence
 
 //Integration step size ASTEP works together with ATIME.
-//tint(ms) = (ATIME+1) * (ASTEP+1) * 2.78��s (same style as AS7341). 
+//tint(ms) = (ATIME+1) * (ASTEP+1) * 2.78µs
 
 #define TCS3448_ASTEP_L     0xD4 ///< Integration step size LSB (ASTEP[7:0])   
 #define TCS3448_ASTEP_H     0xD5 ///< Integration step size MSB (ASTEP[15:8])

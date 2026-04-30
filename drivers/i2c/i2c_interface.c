@@ -14,7 +14,6 @@
 #include "nrf_log_default_backends.h"
 #include <string.h>
 #include <errno.h>
-#include "as7341_defines.h"
 #include "tcs3448_defines.h"
 
 //#define PIN_I2C_SDA   26 
@@ -146,49 +145,6 @@ bool i2c_read_bytes(uint8_t address, uint8_t reg, uint8_t *buf, size_t len) {
         NRF_LOG_ERROR("Failed to read %d bytes from register 0x%02X: %d", len, reg, err_code);
         return false;
     }
-    return true;
-}
-
-// Helper function to write a byte to a register (AS7341)
-bool as7341_write_reg(uint8_t reg, uint8_t value) {
-    uint8_t buf[2] = { reg, value };
-    ret_code_t err_code = nrf_drv_twi_tx(&m_twi, AS7341_I2CADDR_DEFAULT, buf, 2, false);
-    if (err_code != NRF_SUCCESS) {
-        NRF_LOG_ERROR("Failed to write to register 0x%02X: %d", reg, err_code);
-        return false;
-    }
-    return true;
-}
-
-// Helper function to read a byte from a register (AS7341)
-bool as7341_read_reg(uint8_t reg, uint8_t *value) {
-    ret_code_t err_code = nrf_drv_twi_tx(&m_twi, AS7341_I2CADDR_DEFAULT, &reg, 1, false);
-    if (err_code != NRF_SUCCESS) {
-        NRF_LOG_ERROR("Failed to set register 0x%02X: %d", reg, err_code);
-        return false;
-    }
-    err_code = nrf_drv_twi_rx(&m_twi, AS7341_I2CADDR_DEFAULT, value, 1);
-    if (err_code != NRF_SUCCESS) {
-        NRF_LOG_ERROR("Failed to read from register 0x%02X: %d", reg, err_code);
-        return false;
-    }
-    return true;
-}
-
-// Helper function to read a 16-bit value from a register (LSB first, AS7341)
-bool as7341_read_reg16(uint8_t reg, uint16_t *value) {
-    uint8_t buf[2];
-    ret_code_t err_code = nrf_drv_twi_tx(&m_twi, AS7341_I2CADDR_DEFAULT, &reg, 1, false);
-    if (err_code != NRF_SUCCESS) {
-        NRF_LOG_ERROR("Failed to set register 0x%02X: %d", reg, err_code);
-        return false;
-    }
-    err_code = nrf_drv_twi_rx(&m_twi, AS7341_I2CADDR_DEFAULT, buf, 2);
-    if (err_code != NRF_SUCCESS) {
-        NRF_LOG_ERROR("Failed to read 16-bit from register 0x%02X: %d", reg, err_code);
-        return false;
-    }
-    *value = (uint16_t)(buf[0] | (buf[1] << 8)); // LSB first
     return true;
 }
 
